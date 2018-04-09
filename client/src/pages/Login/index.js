@@ -1,0 +1,116 @@
+import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
+import "./style.css";
+import axios from 'axios';
+import Footer from "../../components/Footer";
+import { Container, Form, FormGroup, Input, Label, Card, CardBody, CardHeader, Button } from 'reactstrap';
+import BootNav from "../../components/Nav";
+
+// gather other componets
+//import otherComponent from "../otherComponent";
+
+export default class Login extends Component {
+	state = {
+    username: "",
+    password: "",
+    auth: {
+      userId:"",
+      username:"",
+      isAuthenticated:false
+    }
+  };
+
+  componentWillMount(){
+    axios.get("/auth/isAuthenticated").then((result)=>{
+      const {userId, isAuthenticated,username} = result.data
+      this.setState({
+        auth:{
+          userId,
+          isAuthenticated,
+          username
+        }
+      });
+    });
+  }
+
+  handleChange = (event) => {
+    const {name, value} = event.target;    
+        // Set the state for the appropriate input field
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    //call a sign In function
+    const newUser = {
+      username: this.state.username,
+      password: this.state.password
+    };
+    this.setState({
+      username: "",
+      password: ""
+    }); 
+    const {name} = event.target;
+    axios.post(name, newUser).then((data) => {
+      if (data.data.isAuthenticated){
+        const {userId, isAuthenticated,username} = data.data;
+        this.setState({
+          auth:{
+            userId,
+            isAuthenticated,
+            username
+          }
+        });
+      }
+    });
+  }
+
+  handleLogout = (event) => {
+    event.preventDefault();
+    axios.get("/auth/logout").then((result)=>{
+      this.setState({
+        auth:{
+          userId: "",
+          username: "",
+          isAuthenticated: false
+        }
+      });
+    })
+	};
+	
+	render() {
+	return(
+	<div>
+		<BootNav/>
+		<Container>
+		<Card className="card-login mx-auto mt-5">
+     			<CardHeader>Login</CardHeader> 
+					  <CardBody>
+            		<h3>Client Sign In</h3>
+            			<Form>
+              				<FormGroup>
+                				<Label for="email">Email address</Label>
+                				<Input className="form-control" value = {this.state.username} onChange = {this.props.handleChange} name='username' type="email" aria-describedby="emailHelp" placeholder="Enter email"/>
+              				</FormGroup>
+              				<FormGroup>
+                				<Label for="password">Password</Label>
+                				<Input className="form-control" value = {this.state.password} onChange = {this.props.handleChange} name='password' type="password" placeholder="Password"/>
+              				</FormGroup>
+              				<Button className="btn-block" color="primary" type="submit" name="/auth/signin" onClick = {this.props.handleSubmit}>Login</Button>
+            			</Form>
+            			<div className="text-center">
+              				<Link className="d-block small mt-3" to="/Signup">Sign Up</Link>
+              				<Link className="d-block small" to="">Forgot Password?</Link>
+            			</div>
+          	</CardBody>
+        </Card>
+		</Container>
+		<br/>
+		<Footer/>
+	</div>
+	);
+	}
+}
