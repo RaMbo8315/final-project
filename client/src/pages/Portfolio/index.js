@@ -1,19 +1,12 @@
 import React from 'react';
 import "./style.css";
-import Footer from "../../components/Footer";
 import {Link} from 'react-router-dom';
 import { Container, Row, Col } from 'reactstrap';
-import BootNav from "../../components/Nav";
-
-// gather other componets
-//import otherComponent from "../otherComponent";
 
 export default class Portfolio extends React.Component {
 	render() {
 	return(
 	<div>
-		 <BootNav/>
-
 		<Container>
 
       {/* <!-- Page Heading/Breadcrumbs --> */}
@@ -131,8 +124,6 @@ export default class Portfolio extends React.Component {
       		</ul>
 
     </Container>
-	<Footer/>
-
 </div>
 	);
 };

@@ -1,9 +1,6 @@
 import React from 'react';
 import "./style.css";
 import Image from "../../images/home.jpg"
-import BootNav from "../../components/Nav";
-import Footer from "../../components/Footer";
-// import Header from "../../components/Header";
 import {Link} from 'react-router-dom';
 import { Container, Row, Col, Card, CardBody } from 'reactstrap';
 
@@ -14,7 +11,6 @@ export default class Home extends React.Component {
 	render() {
 	return(
 		<div>
-			<BootNav/>
 			<br/>
 				<Container>
 								<Row my="4">
@@ -33,8 +29,6 @@ export default class Home extends React.Component {
 									</CardBody>
 								</Card>
 				</Container>
-				{/* <br/> */}
-			<Footer/>
 		</div>
 	);
   }

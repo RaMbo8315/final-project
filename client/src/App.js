@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 import {BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-// import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import axios from 'axios';
-
-
-// import SignIn from "./components/SignIn";
-// import SignUp from "./components/SignUp";
-// import Home from "./components/Home";
-// import BootNav from "./components/Nav";
+import ClientNav from "./components/ClientNav";
+import HomeNav from "./components/HomeNav";
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Portfolio from "./pages/Portfolio";
@@ -20,8 +16,6 @@ import Client from "./pages/Client"
 
 class App extends Component {
   state = {
-    fullAddress: "",
-    fullName: "",
 		firstName:"",
 		lastName:"",
 		phoneNumber: "",
@@ -72,8 +66,16 @@ class App extends Component {
 		  password: this.state.password
 		};
 		this.setState({
-		  username: "",
-		  password: ""
+      firstName:"",
+      lastName:"",
+      phoneNumber: "",
+      address: "",
+      address2: "",
+      city: "",
+      state: "",
+      zip: "",
+      username: "",
+      password: "",
 		}); 
 		const {name} = event.target;
 		axios.post(name, newUser).then((data) => {
@@ -88,30 +90,51 @@ class App extends Component {
 			});
 		  }
 		});
-	  }
+    }
 
+    handleLogout = (event) => {
+		event.preventDefault();
+		axios.get("/auth/logout").then((result)=>{
+			this.setState({
+				auth:{
+					userId: "",
+					username: "",
+					isAuthenticated: false
+				}
+			});
+			console.log(result)
+		})
+	};
 
   render() {
     const loggedIn = this.state.auth.isAuthenticated;
     return (
       <Router>
         <div>
+        {loggedIn ? <ClientNav handleLogout={this.handleLogout}/> : <HomeNav/>}
+        {/* <HomeNav handleLogout={this.handleLogout}/> */}
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/About" component={About} />
           <Route exact path="/Portfolio" component={Portfolio} />
           <Route exact path="/Testimonials" component={Testimonials} />
-          <Route exact path="/Client" component={Client} />
+          <Route exact path="/Client" render = {()=> {
+            if(loggedIn){
+              return <Client/>
+            }else{
+              return <Home/>
+            }
+          }} />
           <Route exact path="/Login" render = {()=> {
           if(loggedIn){
             return <Redirect to = "/Client" />
           } else{
-            return <Login 
-            handleChange= {this.handleChange} 
+            return <Login
+            handleChange={this.handleChange}
             handleSubmit = {this.handleSubmit}
-            email = {this.state.email}
-            password = {this.state.password}
-          />
+            username={this.state.username}
+            password={this.state.password}
+            />
           } 
         }}/>
           <Route exact path="/Signup" render = {()=> {
@@ -129,11 +152,12 @@ class App extends Component {
             city = {this.state.city}
             state = {this.state.state}
             zip = {this.state.zip}
-            email = {this.state.username}
+            username = {this.state.username}
             password = {this.state.password}/>
           }  
         }}/>
         </Switch>
+        <Footer/>
         </div>
       </Router>
     );

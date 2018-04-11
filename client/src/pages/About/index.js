@@ -1,8 +1,5 @@
 import React from 'react';
 import "./style.css";
-import BootNav from "../../components/Nav";
-import Footer from "../../components/Footer";
-// import {Link} from 'react-router-dom';
 import { Container, Row, Col } from 'reactstrap';
 
 // gather other componets
@@ -12,7 +9,6 @@ export default class About extends React.Component {
 	render() {
 	return(
 	<div>
-		<BootNav/>
 		<Container>
       		<h1 className="mt-4 mb-3">About
         		<small>Subheading</small>
@@ -104,7 +100,6 @@ export default class About extends React.Component {
      		</Row>
     	</Container>
 		<br/>
-   		<Footer/>
 	</div>
 	);
   }

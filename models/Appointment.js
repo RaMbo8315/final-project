@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 const Appointment = new Schema({
     title: String,
     duration: String,
-    start: Date,
-    end: Date,
+    start: String,
+    end: String,
     user: {
         type: Schema.Types.ObjectId,
         ref: "User"

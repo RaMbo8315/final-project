@@ -1,10 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import "./style.css";
-// import axios from 'axios';
-import Footer from "../../components/Footer";
 import { Container, Col, Form, FormGroup, Row, Input, Label, Card, CardBody, CardHeader } from 'reactstrap';
-import BootNav from "../../components/Nav";
 
 // gather other componets
 //import otherComponent from "../otherComponent";
@@ -13,7 +10,6 @@ export default class Signup extends React.Component {
 	render() {
 	return(
 	<div>
-		<BootNav/>
 		<Container>
 			<Card className="card-register mx-auto mt-5 bg-gray">
 				<CardHeader>Register an Account</CardHeader>
@@ -136,7 +132,6 @@ export default class Signup extends React.Component {
 			</Card>
 		</Container>
 		<br/>
-		<Footer/>
 	</div>
 	);
   }
