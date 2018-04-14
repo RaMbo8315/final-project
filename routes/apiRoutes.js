@@ -15,6 +15,8 @@ module.exports = function (passport) {
 
 		router.post("/createAppt", apptControllers.CreateAppointment);
 
+		router.get("/matchedAppt/:Appt", apptControllers.MatchedAppointment);
+
 		router.post("/api/deleteAppt", apptControllers.DeleteAppointment);
 		
 		router.post("/api/updateAppt", apptControllers.UpdateAppointment);
@@ -29,9 +31,9 @@ module.exports = function (passport) {
 		
 		router.post("/api/updateTest", testControllers.UpdateTestimonial);
 
-		router.get("/api/allClients", clientControllers.AllClients);
+		router.get("/allClients", clientControllers.AllClients);
 		
-		router.get("/api/findClient:id", clientControllers.ClientById);
+		router.get("/findClient/:username", clientControllers.ClientById);
 		
 		router.post("/createClient", clientControllers.CreateClient);
 		

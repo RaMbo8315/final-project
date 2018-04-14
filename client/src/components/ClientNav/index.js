@@ -52,8 +52,8 @@ export default class HomeNav extends React.Component {
 			<Navbar color="dark" dark expand="md lg" fixed="top">
 				<Container>
 					<NavbarBrand href="/">Full Auto Detail</NavbarBrand>
-					<NavbarToggler onClick={this.props.toggle} />
-					<Collapse isOpen={this.props.isOpen} navbar>
+					<NavbarToggler onClick={this.toggle} />
+					<Collapse isOpen={this.state.isOpen} navbar>
 					<Nav className="ml-auto" navbar>
 						<NavItem>
 							<NavLink tag={Link} to="/CustomerHome">Home</NavLink>

@@ -4,8 +4,8 @@ import axios from 'axios';
 import BigCalendar from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from 'moment';
-// import events from '../../event'
-// import HomeNav from "../../components/Nav";
+import PaypalExpressBtn from 'react-paypal-express-checkout';
+import * as FontAwesome from 'react-icons/lib/fa' 
 import {
 	Container,
 	Col, 
@@ -16,44 +16,72 @@ import {
 	Label, 
 	Card, 
 	CardBody, 
-	CardHeader
-} from 'reactstrap';
+	CardHeader, Button, Modal, ModalHeader, ModalBody, ModalFooter,
+	} from 'reactstrap';
 
 	// var appoint = [];
 // gather other componets
 //import otherComponent from "../otherComponent";
 BigCalendar.momentLocalizer(moment);
 
-let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-console.log(allViews)
-
 export default class Client extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			appoint: [],
+			client:{
+				clientName: "",
+				clientId: ""
+			},
 			services: [],
 			service:{
+				price: "",
 				title: "",
 				duration: ""
 			},
 			serviceId: "",
 			start: "",
+			startDate: "",
 			end: "",
+			newAppt:{
+				name: "",
+				title: "",
+				duration: "",
+				start: "",
+				end: "",
+				user: ""
+			},
+			matched: false,
+			modal: false,
+			showAlert: false
 			}
+		this.toggle = this.toggle.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 	  }
-	  
-	componentDidMount(){
+
+	  toggle() {
+		this.setState({
+		  modal: !this.state.modal
+		});
+	  }
+		
+	componentDidMount = () =>{
 		axios.get("/api/allServices").then((result)=>{
-			console.log(result.data)
 			this.setState({
 			 services: result.data
 			})	
 		});
 		axios.get("/api/allAppt").then((result)=>{
-			console.log(result.data)
 			this.setState({
 				appoint: result.data
+			})
+		});
+		axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
+			this.setState({
+				client:{
+					clientName: result.data[0].fullName,
+					clientId: result.data[0]._id
+				}
 			})
 		});
 	}
@@ -62,12 +90,31 @@ export default class Client extends React.Component {
 		this.setState({
 			start:moment(slotInfo.start.toLocaleString()).format("llll"),
 		})
-    	console.log(this.state.start); 
+		const getDate = JSON.stringify(Object.assign(this.state.start));
+		this.setState({
+			startDate: moment(getDate).format()
+		})
+		console.log(this.state.startDate); 
+		this.getMatch(this.state.startDate)
 	}
 
-	// onEventClick(event) {
-	// 	console.log(event);//Shows the event details provided while booking
-	// }
+	getMatch = (date) => {
+		const matchDate = date;
+		axios.get("api/matchedAppt/" + matchDate, console.log("ok")).then((result) => {
+			if(!result.data[0]){
+				this.setState({
+					matched: true
+				})
+				console.log(this.state.matched)
+			}else{
+				this.setState({
+					matched: false
+				})
+			}
+			console.log(matchDate)
+			console.log(this.state.matched)
+		})
+	 }
 
 	handleChange = (event) => {
 		const {name, value} = event.target; 
@@ -75,40 +122,124 @@ export default class Client extends React.Component {
 		this.setState({
 			[name]: value
 		});
+		this.getMatch(this.state.startDate)
+	}
+
+	closeModal = () => {
+		this.setState({
+			newAppt:{
+				name: "",
+				title: "",
+				duration: "",
+				start:"",
+				end: "",
+				user: ""
+			},
+			service: {
+				price: ""
+			},
+			start: ""
+		})
+		console.log(this.state.newAppt, this.state.start, this.state.service.price)
+		this.toggle();
 	}
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		const setDate = moment(this.state.start);
-		console.log(setDate)
-		//call a sign In function
-		this.setState({
-			serviceId: "",
-			start: "",
-		}); 
-		const {name} = event.target;
-		axios.get("/api/ServiceById/" + this.state.serviceId)
-			.then(function(data){
-				let endTime = moment(setDate).add(data.data[0].duration, "m");
-				console.log(endTime)
-				// console.log(this.props.auth.userId)
-				const newAppt = {
-					title: data.data[0].service,
-					duration: data.data[0].duration,
-					start:setDate,
-					end: endTime
-				}
-				console.log(newAppt)
-				axios.post(name, newAppt).then(function(data)
-					{console.log(data)});
+		if(this.state.matched === false){
+			console.log("success")
+			alert(this.state.start+" is not available")
+			this.setState({
+				start: ""
 			})
-	}
+		}else{
+		this.setState({
+			modal: !this.state.modal
+		  });
+		  
+		const setDate = moment(this.state.start).format();
+		const clientId = this.state.client.clientId;
+		const clientName = this.state.client.clientName;	
+		console.log(setDate, clientId, clientName)
+		// const {name} = event.target;
+		axios.get("/api/ServiceById/" + this.state.serviceId)
+			.then((data) => {
+				let endTime = moment(setDate).add(data.data[0].duration, "m").format();
+				let price = data.data[0].price;
+				let duration = data.data[0].duration;
+				let title = data.data[0].service;
+				console.log(setDate, clientId, clientName, endTime, price)
+				this.setState({
+					newAppt:{
+						name: clientName,
+						title: title,
+						duration: duration,
+						start:setDate,
+						end: endTime,
+						user: clientId
+					},
+					service: {
+						price: price
+					},
+					matched: false
+				})
+			this.state.appoint.push(this.state.newAppt)
+			console.log(this.state.appoint)
+				axios.post("/api/createAppt", this.state.newAppt).then((result) => {
+					console.log(result)
+				})
+				})
+		}
+		}
+	
 
 	render() {
+
+		const onSuccess = (payment) => {
+            // Congratulation, it came here means everything's fine!
+            		console.log("The payment was succeeded!", payment);
+            		// You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
+        }		
+        
+        const onCancel = (data) => {
+            // User pressed "cancel" or close Paypal's popup!
+            console.log('The payment was cancelled!', data);
+            // You can bind the "data" object's value to your state or props or whatever here, please see below for sample returned data
+        }	
+        
+        const onError = (err) => {
+            // The main Paypal's script cannot be loaded or somethings block the loading of that script!
+            console.log("Error!", err);
+            // Because the Paypal's main script is loaded asynchronously from "https://www.paypalobjects.com/api/checkout.js"
+            // => sometimes it may take about 0.5 second for everything to get set, or for the button to appear			
+        }			
+            
+        let env = 'sandbox'; // you can set here to 'production' for production
+        let currency = 'USD'; // or you can set this value from your props or state  
+        let total = parseInt(this.state.service.price, 10); // same as above, this is the total amount (based on currency) to be paid by using Paypal express checkout
+        // Document on Paypal's currency code: https://developer.paypal.com/docs/classic/api/currency_codes/
+        
+        const client = {
+            sandbox:    'AZKxB1WrxdJYWz6qeZPuSI64_2jGyf1YMvPT3yrEmvvvphs5ShY6lCkc-UehxgnPKSzGtMpy2tC78rcH',
+            production: 'YOUR-PRODUCTION-APP-ID',
+		}
+		
+		const  style = {
+			size: 'medium',
+			color: 'blue',
+			shape: 'rect',
+			label: 'pay',
+			tagline: false 
+		}
+        // In order to get production's app-ID, you will have to send your app to Paypal for approval first
+        // For sandbox app-ID (after logging into your developer account, please locate the "REST API apps" section, click "Create App"): 
+        //   => https://developer.paypal.com/docs/classic/lifecycle/sb_credentials/
+        // For production app-ID:
+        //   => https://developer.paypal.com/docs/classic/lifecycle/goingLive/		
+	   
 		let Calendar = () =>(
 		<BigCalendar
 		selectable
-		// onSelectEvent={event => this.onEventClick(event)}
 		onSelectSlot={(slotInfo) => this.onSlotChange(slotInfo) }
 		events={this.state.appoint}
 		views={['week', 'day']}
@@ -119,7 +250,6 @@ export default class Client extends React.Component {
 		startAccessor={((e)=>{ return new Date(e.start) })}
 		endAccessor={((e)=>{ return new Date(e.end)})}
 	  />)
-	  console.log(this.state.appoint)
 		return(
 			<div> 
 				<Container>
@@ -132,24 +262,24 @@ export default class Client extends React.Component {
 											<FormGroup>
 												<Row>
 													<Col md="12">
-														<Label for="serviceId">service</Label>
+														<Label for="serviceId">Choose a Service</Label>
 														<Input className="form-control" type="select" value = {this.state.serviceId} onChange = {this.handleChange} name="serviceId">
 															<option selected></option>
 														{(this.state.services.length)
 														? this.state.services.map((job) => (
-															<option value={job._id} key={job._id}>{job.service}</option>
+															<option value={job._id} key={job._id}>{job.service} - ${job.price}</option>
 														))
 														: <option>no value</option>
 														}
 														</Input>
 													</Col>
 													<Col md="12">
-														<Label for="date">date</Label>
-														<Input className="form-control" value = {this.state.start} onChange = {this.handleChange} name="date" type="text" aria-describedby="nameHelp" placeholder="Enter last name"/>
+														<Label for="date">Date</Label>
+														<Input className="form-control" value = {this.state.start} onChange = {this.handleChange} name="date" type="text" aria-describedby="nameHelp" placeholder="Choose a Date and Time from Calendar"/>
 													</Col>
 												</Row>
 											</FormGroup>
-											<Input className="btn btn-primary btn-block" type = 'submit' name = "/api/createAppt" onClick = {this.handleSubmit}/>
+											<Input className="btn btn-primary btn-block" type = 'submit' onClick = {this.handleSubmit}/>								
 										</Form>
 								</CardBody>
 							</Card>
@@ -157,19 +287,16 @@ export default class Client extends React.Component {
 						<Col lg="8">
 							<br/>
 							<Calendar/>
-							{/* <BigCalendar
-								selectable
-								onSelectEvent={event => this.onEventClick(event)}
-								onSelectSlot={(slotInfo) => this.onSlotChange(slotInfo) }
-								events={this.state.appoint}
-								views={['month', 'week']}
-								min={new Date(0, 10, 0, 8, 0, 0)}
-								max={new Date(0, 10, 0, 18, 0, 0)} 
-								startAccessor= "start"
-								endAccessor= "end"
-								defaultView="week"
-								defaultDate={new Date()}
-							/> */}
+							<Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+								<ModalHeader toggle={this.toggle}>Pay in Advance</ModalHeader>
+								<ModalBody>
+									Thank you  <strong>{this.state.newAppt.name}</strong>, for scheduling an appointment with us. We'll see you on <strong>{moment(this.state.newAppt.start).format('llll')}</strong> for your <strong>{this.state.newAppt.title}</strong> service. Your	<strong>{this.state.newAppt.title}</strong> service will cost <strong>${this.state.service.price}</strong>. You can pay now with <strong><FontAwesome.FaPaypal size={28} color={"blue"}/></strong>
+								</ModalBody>
+								<ModalFooter>
+									<PaypalExpressBtn style={style} env={env} client={client} currency={currency} total={total} onError={onError} onSuccess={onSuccess} onCancel={onCancel} />{' '}
+									<Button color="secondary" onClick={this.closeModal}>Cancel</Button>
+								</ModalFooter>
+							</Modal>
 						</Col>
 					</Row>
 						<br/>

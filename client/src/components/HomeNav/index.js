@@ -1,6 +1,7 @@
 import React from 'react';
 import "./style.css";
 import {Link} from 'react-router-dom';
+import * as FontAwesome from 'react-icons/lib/fa'
 import {
 	Collapse,
 	Navbar,
@@ -36,8 +37,8 @@ export default class HomeNav extends React.Component {
 		  <Navbar color="dark" dark expand="md lg" fixed="top">
 		  	<Container>
 				<NavbarBrand href="/">Full Auto Detail</NavbarBrand>
-				<NavbarToggler onClick={this.props.toggle} />
-				<Collapse isOpen={this.props.isOpen} navbar>
+				<NavbarToggler onClick={this.toggle} />
+				<Collapse isOpen={this.state.isOpen} navbar>
 				  <Nav className="ml-auto" navbar>
 						<NavItem>
 							<NavLink tag={Link} to="/">Home</NavLink>
@@ -58,7 +59,10 @@ export default class HomeNav extends React.Component {
 							<NavLink tag={Link} to="">Contact</NavLink>
 						</NavItem>
 						<NavItem>
-							<NavLink tag={Link} to="/Login">Log In</NavLink>
+							<NavLink tag={Link} to="/Login"><FontAwesome.FaSignIn /> Log In</NavLink>
+						</NavItem>
+						<NavItem>
+							<NavLink tag={Link} to="/Signup"><FontAwesome.FaArrowCircleUp /> Sign Up</NavLink>
 						</NavItem>
 			  	</Nav>
 				</Collapse>

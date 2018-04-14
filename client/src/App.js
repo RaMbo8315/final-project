@@ -120,7 +120,7 @@ class App extends Component {
           <Route exact path="/Testimonials" component={Testimonials} />
           <Route exact path="/Client" render = {()=> {
             if(loggedIn){
-              return <Client/>
+              return <Client auth={this.state.auth}/>
             }else{
               return <Home/>
             }

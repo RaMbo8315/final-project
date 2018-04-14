@@ -2,7 +2,7 @@ var db = require("../models");
 
 module.exports = {
     AllClients: function (req, res) {
-        db.Clients.find({})
+        db.User.find({})
             .then(function (data) {
                 console.log(data)
                 res.json(data);
@@ -13,8 +13,8 @@ module.exports = {
     },
 
     ClientById: function (req, res) {
-        db.Client.find({
-                _id: req.params.id
+        db.User.find({
+                    username: req.params.username
             })
             .then(function (data) {
                 res.json(data);
@@ -25,7 +25,7 @@ module.exports = {
     },
 
     CreateClient: function (req, res) {
-        db.Client.create(req.body)
+        db.User.create(req.body)
             .then(function (dbClient) {})
             .then(function (data) {
                 res.json(data);
@@ -36,7 +36,7 @@ module.exports = {
     },
 
     UpdateClient: function (req, res) {
-        db.Client.updateOne({
+        db.User.updateOne({
                 _id: req.params.id,
 
             })
@@ -49,7 +49,7 @@ module.exports = {
     },
 
     DeleteClient: function (req, res) {
-        db.Client.deleteOne({
+        db.User.deleteOne({
                 _id: req.params.id
             })
             .then(function (data) {
