@@ -10,7 +10,7 @@ export default class Portfolio extends React.Component {
 		<Container>
 
       {/* <!-- Page Heading/Breadcrumbs --> */}
-      		<h1 className="mt-4 mb-3">Portfolio 1
+      		<h1 className="mt-4 mb-3">Portfolio 1{" "}
        		 <small>Subheading</small>
       		</h1>
 
@@ -21,7 +21,6 @@ export default class Portfolio extends React.Component {
         	  <li className="breadcrumb-item active">Portfolio 1</li>
       		 </ol>
 
-      {/* <!-- Project One --> */}
      		 <Row>
        			 <Col md="7">
 					<Link to="">

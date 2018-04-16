@@ -56,7 +56,7 @@ export default class HomeNav extends React.Component {
 							<NavLink tag={Link} to="">Services</NavLink>
 						</NavItem>
 						<NavItem>
-							<NavLink tag={Link} to="">Contact</NavLink>
+							<NavLink tag={Link} to="/Contact">Contact</NavLink>
 						</NavItem>
 						<NavItem>
 							<NavLink tag={Link} to="/Login"><FontAwesome.FaSignIn /> Log In</NavLink>

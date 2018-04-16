@@ -5,6 +5,7 @@ module.exports = function (passport) {
 	const testControllers = require("../controllers/Testimonial");
 	const clientControllers = require("../controllers/Client");
 	const serviceControllers = require("../controllers/Service");
+	const messageControllers = require("../controllers/Message");
 
 
 	//add any API routes here
@@ -16,6 +17,10 @@ module.exports = function (passport) {
 		router.post("/createAppt", apptControllers.CreateAppointment);
 
 		router.get("/matchedAppt/:Appt", apptControllers.MatchedAppointment);
+
+		router.get("/doubleAppt/:Appt", apptControllers.DoubleAppointment);
+
+		router.get("/betweenAppt/:Appt", apptControllers.BetweenAppointment);
 
 		router.post("/api/deleteAppt", apptControllers.DeleteAppointment);
 		
@@ -44,6 +49,10 @@ module.exports = function (passport) {
 		router.get("/allServices", serviceControllers.AllServices);
 
 		router.get("/ServiceById/:id", serviceControllers.ServiceById);
+
+		router.get("/allMessage", messageControllers.AllMessages);
+
+		router.post("/createMessage", messageControllers.CreateMessage);
 
 	return router;
 };

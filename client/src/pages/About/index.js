@@ -10,7 +10,7 @@ export default class About extends React.Component {
 	return(
 	<div>
 		<Container>
-      		<h1 className="mt-4 mb-3">About
+      		<h1 className="mt-4 mb-3">About{" "}
         		<small>Subheading</small>
       		</h1>
 

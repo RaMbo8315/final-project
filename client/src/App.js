@@ -11,7 +11,8 @@ import Portfolio from "./pages/Portfolio";
 import Testimonials from "./pages/Testimonials";
 import Login from "./pages/Login";
 import SignUp from "./pages/Signup";
-import Client from "./pages/Client"
+import Client from "./pages/Client";
+import Contact from "./pages/Contact"
 
 
 class App extends Component {
@@ -112,12 +113,12 @@ class App extends Component {
       <Router>
         <div>
         {loggedIn ? <ClientNav handleLogout={this.handleLogout}/> : <HomeNav/>}
-        {/* <HomeNav handleLogout={this.handleLogout}/> */}
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/About" component={About} />
           <Route exact path="/Portfolio" component={Portfolio} />
           <Route exact path="/Testimonials" component={Testimonials} />
+          <Route exact path="/Contact" component={Contact} />
           <Route exact path="/Client" render = {()=> {
             if(loggedIn){
               return <Client auth={this.state.auth}/>

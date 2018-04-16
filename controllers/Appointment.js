@@ -5,7 +5,6 @@ module.exports = {
     AllAppointments: function (req, res) {
         db.Appointment.find({})
             .then(function (data) {
-                console.log(data)
                 res.json(data);
             })
             .catch(function (err) {
@@ -29,6 +28,34 @@ module.exports = {
         db.Appointment.find({
                 $and:[{start:{$lte:req.params.Appt}},
                         {end:{$gt:req.params.Appt}}
+                    ]
+            })
+            .then(function (data) {
+                res.json(data);
+            })
+            .catch(function (err) {
+                res.json(err);
+            });
+    },
+
+    DoubleAppointment: function (req, res) {
+        db.Appointment.find({
+                $and:[{start:{$lt:req.params.Appt}},
+                        {end:{$gte:req.params.Appt}},
+                    ]
+            })
+            .then(function (data) {
+                res.json(data);
+            })
+            .catch(function (err) {
+                res.json(err);
+            });
+    },
+
+    BetweenAppointment: function (req, res) {
+        db.Appointment.find({
+                $and:[{start:{$gte: new Date(JSON.parse(req.params.Appt).appt1).toISOString()}},
+                        {end:{$lte: new Date(JSON.parse(req.params.Appt).appt2).toISOString()}},
                     ]
             })
             .then(function (data) {

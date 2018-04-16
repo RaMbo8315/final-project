@@ -88,7 +88,7 @@ export default class Login extends Component {
             			<div className="text-center">
               				<Link className="d-block small mt-3" to="/Signup">Sign Up</Link>
               				<Link className="d-block small" to="">Forgot Password?</Link>
-            			</div>
+            			</div>  
           	</CardBody>
         </Card>
 		</Container>

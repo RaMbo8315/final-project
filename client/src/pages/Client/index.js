@@ -5,7 +5,8 @@ import BigCalendar from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from 'moment';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
-import * as FontAwesome from 'react-icons/lib/fa' 
+import * as FontAwesome from 'react-icons/lib/fa' ;
+import PopOver from "../../components/PopOver";
 import {
 	Container,
 	Col, 
@@ -16,12 +17,14 @@ import {
 	Label, 
 	Card, 
 	CardBody, 
-	CardHeader, Button, Modal, ModalHeader, ModalBody, ModalFooter,
+	CardHeader,
+	Modal,
+	ModalHeader,
+	ModalBody,
+	ModalFooter,
+	Button
 	} from 'reactstrap';
 
-	// var appoint = [];
-// gather other componets
-//import otherComponent from "../otherComponent";
 BigCalendar.momentLocalizer(moment);
 
 export default class Client extends React.Component {
@@ -51,9 +54,11 @@ export default class Client extends React.Component {
 				end: "",
 				user: ""
 			},
+			doubleMatched: false,
+			betweenMatched: false,
 			matched: false,
 			modal: false,
-			showAlert: false
+			popoverOpen: false
 			}
 		this.toggle = this.toggle.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -64,7 +69,13 @@ export default class Client extends React.Component {
 		  modal: !this.state.modal
 		});
 	  }
-		
+	  
+	  popToggle() {
+		  this.setState({
+			  popoverOpen: !this.state.popoverOpen
+		  })
+	  }
+	
 	componentDidMount = () =>{
 		axios.get("/api/allServices").then((result)=>{
 			this.setState({
@@ -88,33 +99,14 @@ export default class Client extends React.Component {
 
 	onSlotChange(slotInfo) {
 		this.setState({
-			start:moment(slotInfo.start.toLocaleString()).format("llll"),
+			start: moment(slotInfo.start.toLocaleString()).format("llll"),
 		})
 		const getDate = JSON.stringify(Object.assign(this.state.start));
 		this.setState({
 			startDate: moment(getDate).format()
 		})
-		console.log(this.state.startDate); 
-		this.getMatch(this.state.startDate)
+		this.getMatch(this.state.start);
 	}
-
-	getMatch = (date) => {
-		const matchDate = date;
-		axios.get("api/matchedAppt/" + matchDate, console.log("ok")).then((result) => {
-			if(!result.data[0]){
-				this.setState({
-					matched: true
-				})
-				console.log(this.state.matched)
-			}else{
-				this.setState({
-					matched: false
-				})
-			}
-			console.log(matchDate)
-			console.log(this.state.matched)
-		})
-	 }
 
 	handleChange = (event) => {
 		const {name, value} = event.target; 
@@ -122,7 +114,7 @@ export default class Client extends React.Component {
 		this.setState({
 			[name]: value
 		});
-		this.getMatch(this.state.startDate)
+		this.getMatch(this.state.start)
 	}
 
 	closeModal = () => {
@@ -138,37 +130,55 @@ export default class Client extends React.Component {
 			service: {
 				price: ""
 			},
-			start: ""
+			start: "",
+			startDate: "",
+			matched: false,
+			doubleMatched: false,
+			betweenMatched: false
 		})
-		console.log(this.state.newAppt, this.state.start, this.state.service.price)
 		this.toggle();
 	}
 
-	handleSubmit = (event) => {
-		event.preventDefault();
-		if(this.state.matched === false){
-			console.log("success")
-			alert(this.state.start+" is not available")
-			this.setState({
-				start: ""
-			})
-		}else{
-		this.setState({
-			modal: !this.state.modal
-		  });
-		  
+	getMatch = (date) => {
+		const matchDate = date;
+		axios.get("api/matchedAppt/" + matchDate).then((result) => {
+			console.log(result.data[0])
+			if(typeof result.data[0] === "undefined"){
+				if(this.state.doubleMatched || this.state.betweenMatched === true){
+				this.setState({
+					matched: false,
+					popoverOpen: true
+				})
+			}else{
+				this.setState({
+					matched: false,
+					popoverOpen: false
+				})
+			}
+			}else{
+				this.setState({
+					popoverOpen: true,
+					matched: true,
+					doubleMatched: false,
+					betweenMatched: false
+				})
+			}
+			console.log("match",this.state.matched)
+			this.verifyAppt();
+		});
+	 }
+
+	verifyAppt = () => {
 		const setDate = moment(this.state.start).format();
 		const clientId = this.state.client.clientId;
-		const clientName = this.state.client.clientName;	
-		console.log(setDate, clientId, clientName)
-		// const {name} = event.target;
+		const name = this.state.client.clientName;	
+		const clientName = name.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
 		axios.get("/api/ServiceById/" + this.state.serviceId)
 			.then((data) => {
 				let endTime = moment(setDate).add(data.data[0].duration, "m").format();
 				let price = data.data[0].price;
 				let duration = data.data[0].duration;
 				let title = data.data[0].service;
-				console.log(setDate, clientId, clientName, endTime, price)
 				this.setState({
 					newAppt:{
 						name: clientName,
@@ -181,47 +191,117 @@ export default class Client extends React.Component {
 					service: {
 						price: price
 					},
-					matched: false
 				})
-			this.state.appoint.push(this.state.newAppt)
-			console.log(this.state.appoint)
-				axios.post("/api/createAppt", this.state.newAppt).then((result) => {
+
+			axios.get("api/doubleAppt/" + this.state.newAppt.end).then((result) => {
+				console.log(result.data[0])
+				if(typeof result.data[0] === "undefined"){
+					if(this.state.matched || this.state.betweenMatched === true){
+						this.setState({
+							doubleMatched: false,
+							popoverOpen: true
+						})
+					}else{
+						this.setState({
+							doubleMatched: false,
+							popoverOpen: false
+						})
+					}
+				}else{
+					this.setState({
+						popoverOpen: true,
+						doubleMatched: true,
+						matched: false,
+						betweenMatched: false
+					})
+				}
+				console.log("double",this.state.doubleMatched)
+			})
+			const appt = {
+				appt1: setDate,
+				appt2: endTime
+			};
+					axios.get("/api/betweenAppt/" + JSON.stringify(appt)
+					).then((result) => {
+					console.log(result.data[0])
+					if(typeof result.data[0] === "undefined"){
+						if(this.state.doubleMatched || this.state.matched === true){
+							this.setState({
+								betweenMatched: false,
+								popoverOpen: true
+							})
+						}else{
+							this.setState({
+								betweenMatched: false,
+								popoverOpen: false
+							})
+						}
+					}else{
+						this.setState({
+							popoverOpen: true,
+							betweenMatched: true,
+							doubleMatched: false,
+							matched: false
+						})
+					}
+					console.log("between",this.state.betweenMatched)
+					})
+			
+				})
+	}
+
+	handleSubmit = (event) => {
+		event.preventDefault();
+		if(this.state.matched || this.state.doubleMatched || this.state.betweenMatched === true){
+			this.setState({
+				start: "",
+				startDate: "",
+				matched: false,
+				doubleMatched: false,
+				overMatched: false,
+				popoverOpen: true
+			})
+		}else{
+		this.setState({
+			popoverOpen: false,
+			modal: !this.state.modal
+		  });
+		  
+		this.state.appoint.push(this.state.newAppt)
+				axios.post("api/createAppt/", this.state.newAppt).then((result) => {
 					console.log(result)
 				})
-				})
 		}
-		}
+	}
 	
-
 	render() {
-
 		const onSuccess = (payment) => {
-            // Congratulation, it came here means everything's fine!
-            		console.log("The payment was succeeded!", payment);
-            		// You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
-        }		
-        
-        const onCancel = (data) => {
-            // User pressed "cancel" or close Paypal's popup!
-            console.log('The payment was cancelled!', data);
-            // You can bind the "data" object's value to your state or props or whatever here, please see below for sample returned data
-        }	
-        
-        const onError = (err) => {
-            // The main Paypal's script cannot be loaded or somethings block the loading of that script!
-            console.log("Error!", err);
-            // Because the Paypal's main script is loaded asynchronously from "https://www.paypalobjects.com/api/checkout.js"
-            // => sometimes it may take about 0.5 second for everything to get set, or for the button to appear			
-        }			
-            
-        let env = 'sandbox'; // you can set here to 'production' for production
-        let currency = 'USD'; // or you can set this value from your props or state  
-        let total = parseInt(this.state.service.price, 10); // same as above, this is the total amount (based on currency) to be paid by using Paypal express checkout
-        // Document on Paypal's currency code: https://developer.paypal.com/docs/classic/api/currency_codes/
-        
-        const client = {
-            sandbox:    'AZKxB1WrxdJYWz6qeZPuSI64_2jGyf1YMvPT3yrEmvvvphs5ShY6lCkc-UehxgnPKSzGtMpy2tC78rcH',
-            production: 'YOUR-PRODUCTION-APP-ID',
+			// Congratulation, it came here means everything's fine!
+					console.log("The payment was succeeded!", payment);
+					// You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
+		}		
+		
+		const onCancel = (data) => {
+			// User pressed "cancel" or close Paypal's popup!
+			console.log('The payment was cancelled!', data);
+			// You can bind the "data" object's value to your state or props or whatever here, please see below for sample returned data
+		}	
+		
+		const onError = (err) => {
+			// The main Paypal's script cannot be loaded or somethings block the loading of that script!
+			console.log("Error!", err);
+			// Because the Paypal's main script is loaded asynchronously from "https://www.paypalobjects.com/api/checkout.js"
+			// => sometimes it may take about 0.5 second for everything to get set, or for the button to appear			
+		}			
+			
+		let env = 'sandbox'; // you can set here to 'production' for production
+		let currency = 'USD'; // or you can set this value from your props or state  
+		let total = parseInt(this.state.service.price, 10); // same as above, this is the total amount (based on currency) to be paid by using Paypal express checkout
+		// Document on Paypal's currency code: https://developer.paypal.com/docs/classic/api/currency_codes/
+		
+		const client = {
+			sandbox:    'AZKxB1WrxdJYWz6qeZPuSI64_2jGyf1YMvPT3yrEmvvvphs5ShY6lCkc-UehxgnPKSzGtMpy2tC78rcH',
+			production: 'YOUR-PRODUCTION-APP-ID',
 		}
 		
 		const  style = {
@@ -231,12 +311,12 @@ export default class Client extends React.Component {
 			label: 'pay',
 			tagline: false 
 		}
-        // In order to get production's app-ID, you will have to send your app to Paypal for approval first
-        // For sandbox app-ID (after logging into your developer account, please locate the "REST API apps" section, click "Create App"): 
-        //   => https://developer.paypal.com/docs/classic/lifecycle/sb_credentials/
-        // For production app-ID:
-        //   => https://developer.paypal.com/docs/classic/lifecycle/goingLive/		
-	   
+		// In order to get production's app-ID, you will have to send your app to Paypal for approval first
+		// For sandbox app-ID (after logging into your developer account, please locate the "REST API apps" section, click "Create App"): 
+		//   => https://developer.paypal.com/docs/classic/lifecycle/sb_credentials/
+		// For production app-ID:
+		//   => https://developer.paypal.com/docs/classic/lifecycle/goingLive/	
+
 		let Calendar = () =>(
 		<BigCalendar
 		selectable
@@ -255,6 +335,9 @@ export default class Client extends React.Component {
 				<Container>
 					<Row>
 						<Col lg="4">
+							<br/>
+							<p><strong>* Choose the day and time you would like to schedule by clicking on the calendar and choose a service from the dropdown, Highlighted areas are unavailable</strong></p> 
+							<hr/>
 							<Card className="card-register mx-auto mt-5 bg-gray">
 								<CardHeader>Set an Appointment</CardHeader>
 									<CardBody>
@@ -262,12 +345,14 @@ export default class Client extends React.Component {
 											<FormGroup>
 												<Row>
 													<Col md="12">
-														<Label for="serviceId">Choose a Service</Label>
+														<Label for="serviceId">Choose a Service from dropdown</Label>
 														<Input className="form-control" type="select" value = {this.state.serviceId} onChange = {this.handleChange} name="serviceId">
-															<option selected></option>
+															<option></option>
 														{(this.state.services.length)
 														? this.state.services.map((job) => (
-															<option value={job._id} key={job._id}>{job.service} - ${job.price}</option>
+														(job.service === "Wash" ? 
+														<option value={job._id} key={job._id}>{job.service} - ${job.price} - {Math.floor(parseInt(job.duration,10)%60)} minutes</option> 
+														: <option value={job._id} key={job._id}>{job.service} - ${job.price} - {Math.floor(parseInt(job.duration,10)/60)} hours</option>)
 														))
 														: <option>no value</option>
 														}
@@ -275,7 +360,10 @@ export default class Client extends React.Component {
 													</Col>
 													<Col md="12">
 														<Label for="date">Date</Label>
-														<Input className="form-control" value = {this.state.start} onChange = {this.handleChange} name="date" type="text" aria-describedby="nameHelp" placeholder="Choose a Date and Time from Calendar"/>
+														<Input className="form-control" value = {this.state.start} id="Popover1" onChange = {this.handleChange} name="date" type="text" aria-describedby="nameHelp" placeholder="Choose a Day and Time from Calendar"/>
+														<PopOver
+															popoverOpen={this.state.popoverOpen}
+														/>
 													</Col>
 												</Row>
 											</FormGroup>
@@ -288,7 +376,7 @@ export default class Client extends React.Component {
 							<br/>
 							<Calendar/>
 							<Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-								<ModalHeader toggle={this.toggle}>Pay in Advance</ModalHeader>
+								<ModalHeader toggle={this.toggle}>Your appointment has been scheduled</ModalHeader>
 								<ModalBody>
 									Thank you  <strong>{this.state.newAppt.name}</strong>, for scheduling an appointment with us. We'll see you on <strong>{moment(this.state.newAppt.start).format('llll')}</strong> for your <strong>{this.state.newAppt.title}</strong> service. Your	<strong>{this.state.newAppt.title}</strong> service will cost <strong>${this.state.service.price}</strong>. You can pay now with <strong><FontAwesome.FaPaypal size={28} color={"blue"}/></strong>
 								</ModalBody>
