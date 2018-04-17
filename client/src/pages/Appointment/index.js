@@ -82,6 +82,7 @@ export default class Client extends React.Component {
 			this.setState({
 			 services: result.data
 			})	
+			console.log(result.data)
 		});
 		axios.get("/api/allAppt").then((result)=>{
 			this.setState({
@@ -91,7 +92,7 @@ export default class Client extends React.Component {
 		axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
 			this.setState({
 				client:{
-					clientName: result.data[0].fullName.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' '),
+					clientName: result.data[0].firstName.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' '),
 					clientId: result.data[0]._id
 				}
 			})
@@ -173,6 +174,7 @@ export default class Client extends React.Component {
 		const setDate = moment(this.state.start).format();
 		const clientId = this.state.client.clientId;
 		const name = this.state.client.clientName;	
+		console.log(this.state.serviceId)
 		// const clientName = name.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
 		axios.get("/api/ServiceById/" + this.state.serviceId)
 			.then((data) => {
