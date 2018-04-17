@@ -182,6 +182,7 @@ export default class Client extends React.Component {
 				let price = data.data[0].price;
 				let duration = data.data[0].duration;
 				let title = data.data[0].service;
+				console.log(data)
 				this.setState({
 					newAppt:{
 						name: name,
