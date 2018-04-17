@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import "./style.css";
+import HomeNav from "../../components/HomeNav";
 import { Container, Col, Form, FormGroup, Row, Input, Label, Card, CardBody, CardHeader } from 'reactstrap';
 
 // gather other componets
@@ -10,6 +10,7 @@ export default class Signup extends React.Component {
 	render() {
 	return(
 	<div>
+		<HomeNav/>
 		<Container>
 			<Card className="card-register mx-auto mt-5 bg-gray">
 				<CardHeader>Register an Account</CardHeader>
@@ -125,8 +126,6 @@ export default class Signup extends React.Component {
 						<Input className="btn btn-primary btn-block" type = 'submit' name = "/auth/signup" onClick = {this.props.handleSubmit}/>
 					</Form>
 					<div className="text-center">
-						<Link className="d-block small mt-3" to="/login">Login Page</Link>
-						{/* <Link className="d-block small" to="">Forgot Password? </Link> */}
 					</div>
 				</CardBody>
 			</Card>

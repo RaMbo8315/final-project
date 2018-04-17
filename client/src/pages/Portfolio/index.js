@@ -1,5 +1,6 @@
 import React from 'react';
 import "./style.css";
+import HomeNav from "../../components/HomeNav";
 import {Link} from 'react-router-dom';
 import { Container, Row, Col } from 'reactstrap';
 
@@ -7,20 +8,27 @@ export default class Portfolio extends React.Component {
 	render() {
 	return(
 	<div>
+		<HomeNav/>
+		<br/>
 		<Container>
-
-      {/* <!-- Page Heading/Breadcrumbs --> */}
-      		<h1 className="mt-4 mb-3">Portfolio 1{" "}
-       		 <small>Subheading</small>
-      		</h1>
-
-     		 <ol className="breadcrumb">
-      		  <li className="breadcrumb-item">
-       		   <a href="index.html">Home</a>
-       		  </li>
-        	  <li className="breadcrumb-item active">Portfolio 1</li>
-      		 </ol>
-
+			<ol className="breadcrumb">
+				<li className="breadcrumb-item">
+					<Link to="/">Home</Link>
+				</li>
+				<li className="breadcrumb-item">
+					<Link to="/About">About</Link>
+				</li>
+				<li className="breadcrumb-item">
+					<Link to="/Services">Services</Link>
+				</li>
+				<li className="breadcrumb-item active">Portfolio</li>
+				<li className="breadcrumb-item">
+					<Link to="/Testimonials">Testimonials</Link>
+				</li>
+				<li className="breadcrumb-item">
+					<Link to="/Contact">Contact</Link>
+				</li>
+			</ol>
      		 <Row>
        			 <Col md="7">
 					<Link to="">
@@ -35,11 +43,7 @@ export default class Portfolio extends React.Component {
           		  </a>
         		 </Col>
       		 </Row>
-      {/* <!-- /.row --> */}
-
      		 <hr/>
-
-      {/* <!-- Project Two --> */}
       		 <Row>
        			 <Col md="7">
          			 <a href="">
@@ -54,11 +58,7 @@ export default class Portfolio extends React.Component {
           		  </a>
         		 </Col>
       		 </Row>
-      {/* <!-- /.row --> */}
-
       			<hr/>
-
-      {/* <!-- Project Three --> */}
       		 <Row>
       	   	  <Col md="7">
          		 <a href="">

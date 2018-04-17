@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import "./style.css";
 import axios from 'axios';
+import HomeNav from "../../components/HomeNav";
 import { Container, Form, FormGroup, Input, Label, Card, CardBody, CardHeader, Button } from 'reactstrap';
 
 // gather other componets
@@ -69,11 +70,13 @@ export default class Login extends Component {
 	render() {
 	return(
 	<div>
+    <HomeNav/>
 		<Container>
+      <br/>
+      <br/>
 		<Card className="card-login mx-auto mt-5">
      			<CardHeader>Login</CardHeader> 
 					  <CardBody>
-            		<h3>Client Sign In</h3>
             			<Form>
               				<FormGroup>
                 				<Label for="username">Email address</Label>
@@ -87,12 +90,12 @@ export default class Login extends Component {
             			</Form>
             			<div className="text-center">
               				<Link className="d-block small mt-3" to="/Signup">Sign Up</Link>
-              				<Link className="d-block small" to="">Forgot Password?</Link>
             			</div>  
           	</CardBody>
         </Card>
 		</Container>
 		<br/>
+    <br/>
 	</div>
 	);
 	}

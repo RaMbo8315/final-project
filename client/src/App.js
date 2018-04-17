@@ -2,31 +2,31 @@ import React, { Component } from 'react';
 import './App.css';
 import {BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import axios from 'axios';
-import ClientNav from "./components/ClientNav";
-import HomeNav from "./components/HomeNav";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Portfolio from "./pages/Portfolio";
 import Testimonials from "./pages/Testimonials";
-import Login from "./pages/Login";
 import SignUp from "./pages/Signup";
-import Client from "./pages/Client";
-import Contact from "./pages/Contact"
-
+import Appointment from "./pages/Appointment";
+import Contact from "./pages/Contact";
+import Profile from "./pages/Profile";
+import Services from "./pages/Services";
 
 class App extends Component {
   state = {
-		firstName:"",
-		lastName:"",
-		phoneNumber: "",
-		address: "",
-		address2: "",
-		city: "",
-		state: "",
-		zip: "",
-		username: "",
-		password: "",
+    client:{
+      firstName:"",
+      lastName:"",
+      phoneNumber: "",
+      address: "",
+      address2: "",
+      city: "",
+      state: "",
+      zip: "",
+      username: "",
+      password: ""
+    },
 		auth: {
 		  userId:"",
 		  username:"",
@@ -34,7 +34,7 @@ class App extends Component {
 		}
 	  };
 	
-	  componentWillMount(){
+	  componentDidMount(){
       axios.get("/auth/isAuthenticated").then((result)=>{
         const {userId, isAuthenticated,username} = result.data
         this.setState({
@@ -60,23 +60,30 @@ class App extends Component {
 	
 		//call a sign In function
 		const newUser = {
-      fullName: this.state.firstName+" "+this.state.lastName,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
       phoneNumber: this.state.phoneNumber,
-      fullAddress: this.state.address+" "+this.state.address2+" "+this.state.city+" "+this.state.state+" "+this.state.zip,
+      address: this.state.address,
+      address2: this.state.address2,
+      city: this.state.city,
+      state: this.state.state,
+      zip: this.state.zip,
 		  username: this.state.username,
 		  password: this.state.password
 		};
 		this.setState({
-      firstName:"",
-      lastName:"",
-      phoneNumber: "",
-      address: "",
-      address2: "",
-      city: "",
-      state: "",
-      zip: "",
-      username: "",
-      password: "",
+      client:{
+        firstName:"",
+        lastName:"",
+        phoneNumber: "",
+        address: "",
+        address2: "",
+        city: "",
+        state: "",
+        zip: "",
+        username: "",
+        password: "",
+      }
 		}); 
 		const {name} = event.target;
 		axios.post(name, newUser).then((data) => {
@@ -102,45 +109,53 @@ class App extends Component {
 					username: "",
 					isAuthenticated: false
 				}
-			});
+      });
 			console.log(result)
 		})
 	};
 
   render() {
     const loggedIn = this.state.auth.isAuthenticated;
+    console.log(loggedIn)
+    // debugger;
     return (
       <Router>
         <div>
-        {loggedIn ? <ClientNav handleLogout={this.handleLogout}/> : <HomeNav/>}
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" render = {()=> {
+            if(loggedIn){
+              return <Redirect to="/Profile"/>
+            }else{
+              return <Home
+                        username={this.state.username}
+                        password={this.state.password}
+                        handleChange={this.handleChange}
+                        handleSubmit={this.handleSubmit}
+                      />
+            }
+          }} />
           <Route exact path="/About" component={About} />
+          <Route exact path="/Services" component={Services} />
           <Route exact path="/Portfolio" component={Portfolio} />
           <Route exact path="/Testimonials" component={Testimonials} />
           <Route exact path="/Contact" component={Contact} />
-          <Route exact path="/Client" render = {()=> {
+          <Route exact path="/Profile" render = {()=> {
             if(loggedIn){
-              return <Client auth={this.state.auth}/>
+              return <Profile auth={this.state.auth} handleLogout={this.handleLogout}/>
             }else{
-              return <Home/>
+              return <Redirect to = "/" />
             }
           }} />
-          <Route exact path="/Login" render = {()=> {
-          if(loggedIn){
-            return <Redirect to = "/Client" />
-          } else{
-            return <Login
-            handleChange={this.handleChange}
-            handleSubmit = {this.handleSubmit}
-            username={this.state.username}
-            password={this.state.password}
-            />
-          } 
-        }}/>
+           <Route exact path="/SetAppointment" render = {()=> {
+            if(loggedIn){
+              return <Appointment auth={this.state.auth} handleLogout={this.handleLogout}/>
+            }else{
+              return <Redirect to = "/" />
+            }
+          }}/>
           <Route exact path="/Signup" render = {()=> {
           if(loggedIn){
-            return <Redirect to = "/Client" />
+            return <Redirect to = "/Profile" />
           } else{
             return <SignUp 
             handleChange= {this.handleChange} 

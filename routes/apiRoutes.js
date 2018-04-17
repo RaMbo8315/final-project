@@ -44,7 +44,7 @@ module.exports = function (passport) {
 		
 		router.post("/api/deleteClient", clientControllers.DeleteClient);
 		
-		router.post("/api/updateClient", clientControllers.UpdateClient);
+		router.post("/updateClient", clientControllers.UpdateClient);
 
 		router.get("/allServices", serviceControllers.AllServices);
 

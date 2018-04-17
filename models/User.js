@@ -3,9 +3,14 @@ const Schema = mongoose.Schema;
 const passportLocalMongoose = require('passport-local-mongoose');
 
 const User = new Schema({
-	fullName: String,
-	fullAddress: String,
-    phoneNumber: String,
+	firstName: String,
+	lastName: String,
+	phoneNumber: String,
+	address: String,
+	address2: String,
+	city: String,
+	state: String,
+	zip: String,
 });
 //passport-local-mongoose creates a 'username' and some password fields for you
 //you can add some other fields here too if you like

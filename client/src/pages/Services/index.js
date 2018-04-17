@@ -7,7 +7,7 @@ import { Container } from 'reactstrap';
 // gather other componets
 //import otherComponent from "../otherComponent";
 
-export default class Testimonials extends React.Component {
+export default class Services extends React.Component {
 	
 	render() {
 	return(
@@ -22,13 +22,13 @@ export default class Testimonials extends React.Component {
 						<li className="breadcrumb-item">
 							<Link to="/About">About</Link>
 						</li>
-						<li className="breadcrumb-item">
-							<Link to="/Services">Services</Link>
-						</li>
+						<li className="breadcrumb-item active">Services</li>
 						<li className="breadcrumb-item">
 							<Link to="/Portfolio">Portfolio</Link>
 						</li>
-						<li className="breadcrumb-item active">Testimonials</li>
+						<li className="breadcrumb-item">
+							<Link to="/Testimonials">Testimonials</Link>
+						</li>
 						<li className="breadcrumb-item">
 							<Link to="/Contact">Contact</Link>
 						</li>

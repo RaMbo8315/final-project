@@ -1,12 +1,14 @@
 import React from 'react';
 import "./style.css";
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 import BigCalendar from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from 'moment';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
 import * as FontAwesome from 'react-icons/lib/fa' ;
 import PopOver from "../../components/PopOver";
+import UserNav from "../../components/UserNav";
 import {
 	Container,
 	Col, 
@@ -17,7 +19,6 @@ import {
 	Label, 
 	Card, 
 	CardBody, 
-	CardHeader,
 	Modal,
 	ModalHeader,
 	ModalBody,
@@ -90,7 +91,7 @@ export default class Client extends React.Component {
 		axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
 			this.setState({
 				client:{
-					clientName: result.data[0].fullName,
+					clientName: result.data[0].fullName.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' '),
 					clientId: result.data[0]._id
 				}
 			})
@@ -172,7 +173,7 @@ export default class Client extends React.Component {
 		const setDate = moment(this.state.start).format();
 		const clientId = this.state.client.clientId;
 		const name = this.state.client.clientName;	
-		const clientName = name.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
+		// const clientName = name.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
 		axios.get("/api/ServiceById/" + this.state.serviceId)
 			.then((data) => {
 				let endTime = moment(setDate).add(data.data[0].duration, "m").format();
@@ -181,7 +182,7 @@ export default class Client extends React.Component {
 				let title = data.data[0].service;
 				this.setState({
 					newAppt:{
-						name: clientName,
+						name: name,
 						title: title,
 						duration: duration,
 						start:setDate,
@@ -332,16 +333,25 @@ export default class Client extends React.Component {
 	  />)
 		return(
 			<div> 
+				<UserNav handleLogout={this.props.handleLogout}>
+				{this.state.client.clientName}
+				</UserNav>
 				<Container>
+					<h1 className="mt-4 mb-3">Schedule Appointment</h1>
+					<ol className="breadcrumb">
+						<li className="breadcrumb-item">
+							<Link to="/Profile">Profile</Link>
+						</li>
+						<li className="breadcrumb-item active">Schedule Appointment</li>
+					</ol>
 					<Row>
 						<Col lg="4">
 							<br/>
 							<p><strong>* Choose the day and time you would like to schedule by clicking on the calendar and choose a service from the dropdown, Highlighted areas are unavailable</strong></p> 
 							<hr/>
-							<Card className="card-register mx-auto mt-5 bg-gray">
-								<CardHeader>Set an Appointment</CardHeader>
+							<Card className="card-register mx-auto mt-5 bg-gray" outline color="info">
 									<CardBody>
-										<Form id="register">
+										<Form>
 											<FormGroup>
 												<Row>
 													<Col md="12">

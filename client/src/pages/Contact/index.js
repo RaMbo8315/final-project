@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import "./style.css";
 import * as FontAwesome from 'react-icons/lib/fa'
 import MdWatchLater from 'react-icons/lib/md/watch-later'
+import HomeNav from "../../components/HomeNav";
 import {
 	Container,
 	Col, 
@@ -20,13 +21,24 @@ export default class Contact extends React.Component {
 	render() {
 	return(
 		<div>
+			<HomeNav/>
+			<br/>
 			<Container>
-				<h1 className="mt-4 mb-3">Contact{" "}
-				<small>Subheading</small>
-				</h1>
 				<ol className="breadcrumb">
 					<li className="breadcrumb-item">
 						<Link to="/">Home</Link>
+					</li>
+					<li className="breadcrumb-item">
+						<Link to="/Contact">About</Link>
+					</li>
+					<li className="breadcrumb-item">
+						<Link to="/Services">Services</Link>
+					</li>
+					<li className="breadcrumb-item">
+						<Link to="/Portfolio">Portfolio</Link>
+					</li>
+					<li className="breadcrumb-item">
+						<Link to="/Testimonials">Testimonials</Link>
 					</li>
 					<li className="breadcrumb-item active">Contact</li>
 				</ol>

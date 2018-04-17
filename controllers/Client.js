@@ -37,9 +37,8 @@ module.exports = {
 
     UpdateClient: function (req, res) {
         db.User.updateOne({
-                _id: req.params.id,
-
-            })
+                username: req.params.client.username,
+            },console.log(req.params))
             .then(function (data) {
                 res.json(data);
             })
