@@ -90,6 +90,7 @@ export default class Client extends React.Component {
 			})
 		});
 		axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
+			console.log(result)
 			this.setState({
 				client:{
 					clientName: result.data[0].firstName.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' '),
@@ -182,7 +183,7 @@ export default class Client extends React.Component {
 				let price = data.data[0].price;
 				let duration = data.data[0].duration;
 				let title = data.data[0].service;
-				console.log(data)
+				console.log(data.data)
 				this.setState({
 					newAppt:{
 						name: name,
