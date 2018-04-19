@@ -89,15 +89,15 @@ export default class Client extends React.Component {
 				appoint: result.data
 			})
 		});
-		// axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
-		// 	console.log(result)
-		// 	this.setState({
-		// 		client:{
-		// 			clientName: result.data[0].firstName.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' '),
-		// 			clientId: result.data[0]._id
-		// 		}
-		// 	})
-		// });
+		axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
+			console.log(result)
+			this.setState({
+				client:{
+					clientName: result.data[0].firstName.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' '),
+					clientId: result.data[0]._id
+				}
+			})
+		});
 	}
 
 	onSlotChange(slotInfo) {
