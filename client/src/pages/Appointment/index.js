@@ -143,7 +143,12 @@ export default class Client extends React.Component {
 	}
 
 	getMatch = (date) => {
-		const matchDate = date;
+		let matchDate = "";
+		if(date){
+		matchDate = date;
+		}
+		console.log(matchDate)
+		if(matchDate){
 		axios.get("api/matchedAppt/" + matchDate).then((result) => {
 			console.log(result.data[0])
 			if(typeof result.data[0] === "undefined"){
@@ -167,23 +172,29 @@ export default class Client extends React.Component {
 				})
 			}
 			console.log("match",this.state.matched)
-			this.verifyAppt();
+			this.verifyAppt(this.state.serviceId);
 		});
+	}
 	 }
 
-	verifyAppt = () => {
+	verifyAppt = (id) => {
+		let serviceId = "";
+		if(id){
+			serviceId = id;
+		}
 		const setDate = moment(this.state.start).format();
 		const clientId = this.state.client.clientId;
 		const name = this.state.client.clientName;	
-		console.log(this.state.serviceId)
-		// const clientName = name.toLowerCase().split(' ').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
-		axios.get("/api/ServiceById/" + this.state.serviceId)
+		console.log(serviceId)
+		axios.get("/api/ServiceById/" + id)
 			.then((data) => {
+				console.log(data.data.value)
+				if(!typeof data.data.value === "undefined"){
 				let endTime = moment(setDate).add(data.data[0].duration, "m").format();
 				let price = data.data[0].price;
 				let duration = data.data[0].duration;
 				let title = data.data[0].service;
-				console.log(data.data)
+				console.log(data.data.value)
 				this.setState({
 					newAppt:{
 						name: name,
@@ -197,10 +208,11 @@ export default class Client extends React.Component {
 						price: price
 					},
 				})
-
+			}
+	console.log(this.state.newAppt)
 			axios.get("api/doubleAppt/" + this.state.newAppt.end).then((result) => {
-				console.log(result.data[0])
-				if(typeof result.data[0] === "undefined"){
+				console.log(result.data.value)
+				if(typeof result.data[0] === "undefined" && typeof result.data.value === "undefined"){
 					if(this.state.matched || this.state.betweenMatched === true){
 						this.setState({
 							doubleMatched: false,
@@ -223,8 +235,8 @@ export default class Client extends React.Component {
 				console.log("double",this.state.doubleMatched)
 			})
 			const appt = {
-				appt1: setDate,
-				appt2: endTime
+				appt1: this.state.newAppt.start,
+				appt2: this.state.newAppt.end
 			};
 					axios.get("/api/betweenAppt/" + JSON.stringify(appt)
 					).then((result) => {

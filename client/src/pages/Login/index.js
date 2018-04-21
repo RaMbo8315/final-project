@@ -80,7 +80,7 @@ export default class Login extends Component {
             			<Form>
               				<FormGroup>
                 				<Label for="username">Email address</Label>
-                				<Input className="form-control" value = {this.props.username} onChange = {this.props.handleChange} name='username' type="email" aria-describedby="emailHelp" placeholder="Enter email"/>
+                				<Input className="form-control" value = {this.props.username} onChange = {this.props.handleChange} name='username' placeholder="Enter email"/>
               				</FormGroup>
               				<FormGroup>
                 				<Label for="password">Password</Label>
