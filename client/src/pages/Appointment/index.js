@@ -187,20 +187,20 @@ export default class Client extends React.Component {
 		const name = this.state.client.clientName;	
 		console.log(serviceId)
 		axios.get("/api/ServiceById/" + id)
-			.then((data) => {
-				console.log(data.data.value)
-				if(!typeof data.data.value === "undefined"){
-				let endTime = moment(setDate).add(data.data[0].duration, "m").format();
-				let price = data.data[0].price;
-				let duration = data.data[0].duration;
-				let title = data.data[0].service;
-				console.log(data.data.value)
+			.then((result) => {
+				console.log(result.data)
+				if(typeof result.data.value === "undefined"){
+				let endTime = moment(setDate).add(result.data[0].duration, "m").format();
+				let price = result.data[0].price;
+				let duration = result.data[0].duration;
+				let title = result.data[0].service;
+				console.log(endTime,price,duration,title)
 				this.setState({
 					newAppt:{
 						name: name,
 						title: title,
 						duration: duration,
-						start:setDate,
+						start: setDate,
 						end: endTime,
 						user: clientId
 					},
@@ -211,8 +211,8 @@ export default class Client extends React.Component {
 			}
 	console.log(this.state.newAppt)
 			axios.get("api/doubleAppt/" + this.state.newAppt.end).then((result) => {
-				console.log(result.data.value)
-				if(typeof result.data[0] === "undefined" && typeof result.data.value === "undefined"){
+				console.log(result.data[0])
+				if(typeof result.data[0] === "undefined"){
 					if(this.state.matched || this.state.betweenMatched === true){
 						this.setState({
 							doubleMatched: false,

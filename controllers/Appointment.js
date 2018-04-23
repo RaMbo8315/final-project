@@ -57,7 +57,7 @@ module.exports = {
                 $and:[{start:{$gte: new Date(JSON.parse(req.params.Appt).appt1).toISOString()}},
                         {end:{$lte: new Date(JSON.parse(req.params.Appt).appt2).toISOString()}},
                     ]
-            })
+            },console.log(req.params.Appt))
             .then(function (data) {
                 res.json(data);
             })
