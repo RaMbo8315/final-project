@@ -10,7 +10,9 @@ export default class Signup extends React.Component {
 	render() {
 	return(
 	<div>
-		<HomeNav/>
+		<HomeNav
+			handleSubmit={this.props.handleSubmit}
+			/>
 		<Container>
 			<Card className="card-register mx-auto mt-5 bg-gray">
 				<CardHeader>Register an Account</CardHeader>
@@ -30,7 +32,7 @@ export default class Signup extends React.Component {
 						</FormGroup>
 						<FormGroup>
 							<Label for="phoneNumber">Phone Number</Label>
-							<Input type="telephone" className="form-control" value = {this.props.phonenumber} onChange = {this.props.handleChange} name="phoneNumber" placeholder="555-555-5555" pattern="\(?\d+\)?[-.\s]?\d+[-.\s]?\d+"/>
+							<Input type="telephone" className="form-control" value = {this.props.phonenumber} onChange = {this.props.handleChange} name="phoneNumber" placeholder="555-555-5555" data-format="ddd-ddd-dddd" pattern="\(?\d+\)?[-.\s]?\d+[-.\s]?\d+"/>
 						</FormGroup>
 						<FormGroup>
 							<Label for="address">Address</Label>

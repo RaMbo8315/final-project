@@ -1,6 +1,6 @@
 module.exports = {
 	User:require("./User.js"),
-	Testimonial:require("./Testimonial.js"),
+	Review:require("./Review.js"),
 	Appointment:require("./Appointment.js"),
 	Service:require("./Service.js"),
 }

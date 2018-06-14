@@ -5,8 +5,6 @@ import axios from 'axios';
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Portfolio from "./pages/Portfolio";
-import Testimonials from "./pages/Testimonials";
 import SignUp from "./pages/Signup";
 import Appointment from "./pages/Appointment";
 import Contact from "./pages/Contact";
@@ -120,59 +118,59 @@ class App extends Component {
     // debugger;
     return (
       <Router>
-        <div>
-        <Switch>
-          <Route exact path="/" render = {()=> {
-            if(loggedIn){
-              return <Redirect to="/Profile"/>
-            }else{
-              return <Home
-                        username={this.state.username}
-                        password={this.state.password}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                      />
-            }
-          }} />
-          <Route exact path="/About" component={About} />
-          <Route exact path="/Services" component={Services} />
-          <Route exact path="/Portfolio" component={Portfolio} />
-          <Route exact path="/Testimonials" component={Testimonials} />
-          <Route exact path="/Contact" component={Contact} />
-          <Route exact path="/Profile" render = {()=> {
-            if(loggedIn){
-              return <Profile auth={this.state.auth} handleLogout={this.handleLogout}/>
-            }else{
-              return <Redirect to = "/" />
-            }
-          }} />
-           <Route exact path="/SetAppointment" render = {()=> {
-            if(loggedIn){
-              return <Appointment auth={this.state.auth} handleLogout={this.handleLogout}/>
-            }else{
-              return <Redirect to = "/" />
-            }
-          }}/>
-          <Route exact path="/Signup" render = {()=> {
-          if(loggedIn){
-            return <Redirect to = "/Profile" />
-          } else{
-            return <SignUp 
-            handleChange= {this.handleChange} 
-            handleSubmit = {this.handleSubmit}
-            firstname = {this.state.firstName}
-            lastname = {this.state.lastName}
-            phonenumber = {this.state.phoneNumber}
-            address = {this.state.address}
-            address2 = {this.state.address2}
-            city = {this.state.city}
-            state = {this.state.state}
-            zip = {this.state.zip}
-            username = {this.state.username}
-            password = {this.state.password}/>
-          }  
-        }}/>
-        </Switch>
+        <div className="Site">
+          <div className="Site-content">
+            <Switch>
+              <Route exact path="/" render = {()=> {
+                if(loggedIn){
+                  return <Redirect to="/Profile"/>
+                }else{
+                  return <Home
+                            username={this.state.username}
+                            password={this.state.password}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                          />
+                }
+              }} />
+              <Route exact path="/About" component={About}/>
+              <Route exact path="/Services" component={Services} />
+              <Route exact path="/Contact" component={Contact} />
+              <Route exact path="/Profile" render = {()=> {
+                if(loggedIn){
+                  return <Profile auth={this.state.auth} handleLogout={this.handleLogout}/>
+                }else{
+                  return <Redirect to = "/" />
+                }
+              }} />
+              <Route exact path="/SetAppointment" render = {()=> {
+                if(loggedIn){
+                  return <Appointment auth={this.state.auth} handleLogout={this.handleLogout}/>
+                }else{
+                  return <Redirect to = "/" />
+                }
+              }}/>
+              <Route exact path="/Signup" render = {()=> {
+              if(loggedIn){
+                return <Redirect to = "/Profile" />
+              } else{
+                return <SignUp 
+                handleChange= {this.handleChange} 
+                handleSubmit = {this.handleSubmit}
+                firstname = {this.state.firstName}
+                lastname = {this.state.lastName}
+                phonenumber = {this.state.phoneNumber}
+                address = {this.state.address}
+                address2 = {this.state.address2}
+                city = {this.state.city}
+                state = {this.state.state}
+                zip = {this.state.zip}
+                username = {this.state.username}
+                password = {this.state.password}/>
+              }  
+            }}/>
+            </Switch>
+          </div>
         <Footer/>
         </div>
       </Router>

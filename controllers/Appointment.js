@@ -12,10 +12,10 @@ module.exports = {
             });
     },
 
-    AppointmentsByClient: function (req, res) {
+    AppointmentsByUser: function (req, res) {
         db.Appointment.find({
-                client: req.params.id
-            })
+                user: req.params.userId
+            }).sort({start: -1})
             .then(function (data) {
                 res.json(data);
             })
@@ -57,7 +57,7 @@ module.exports = {
                 $and:[{start:{$gte: new Date(JSON.parse(req.params.Appt).appt1).toISOString()}},
                         {end:{$lte: new Date(JSON.parse(req.params.Appt).appt2).toISOString()}},
                     ]
-            },console.log(req.params.Appt))
+            })
             .then(function (data) {
                 res.json(data);
             })
@@ -68,8 +68,8 @@ module.exports = {
 
     DeleteAppointment: function (req, res) {
         db.Appointment.deleteOne({
-                _id: req.params.id
-            })
+                _id: req.body._id
+            },console.log(req.body._id))
             .then(function (data) {
                 res.json(data);
             })

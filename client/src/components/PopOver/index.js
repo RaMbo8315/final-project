@@ -11,7 +11,7 @@ export default class PopOver extends React.Component {
 		return(
 			<div>
 				<Popover placement="bottom" isOpen={this.props.popoverOpen} target="Popover1">
-					<PopoverBody><strong>The date and time you have chosen is conflicting with a previously scheduled appointment</strong></PopoverBody>
+					<PopoverBody><strong>The date and time you have chosen is conflicting with a previously scheduled appointment or has already passed</strong></PopoverBody>
 				</Popover>
 			</div>
 		);

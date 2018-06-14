@@ -10,7 +10,7 @@ const Footer = (props) => {
 		<div>
 			<footer className="py-5 bg-dark">
       			<Container>
-        			<p className="m-0 text-center text-white">Copyright &copy; Your Website 2018</p>
+				  <p className="text-white m-0 text-center"> (407) 446 - 3684   &#8226; HUrena1583@gmail.com  &#8226;  Github.com/RaMbo8315</p>
       			</Container>
     		</footer>
 		</div>

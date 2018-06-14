@@ -4,7 +4,7 @@ import Image from "../../images/home.jpg"
 import * as FontAwesome from 'react-icons/lib/fa'
 import {Link} from 'react-router-dom';
 import HomeNav from "../../components/HomeNav";
-import { Container, Row, Col, Card, CardBody } from 'reactstrap';
+import { Container, Row, Col } from 'reactstrap';
 
 // gather other componets
 //import otherComponent from "../otherComponent";
@@ -31,30 +31,36 @@ export default class Home extends React.Component {
 							<Link to="/Services">Services</Link>
 						</li>
 						<li className="breadcrumb-item">
-							<Link to="/Portfolio">Portfolio</Link>
-						</li>
-						<li className="breadcrumb-item">
-							<Link to="/Testimonials">Testimonials</Link>
-						</li>
-						<li className="breadcrumb-item">
 							<Link to="/Contact">Contact</Link>
 						</li>
 					</ol>
 					<Row my="4">
 						<Col lg="8">
-							<img className="img-fluid rounded" src={Image} alt=""/>
+							<img className="img-fluid" src={Image} alt="Car"/>
 						</Col>
 						<Col lg="4">
-							<h1>Business Name or Tagline</h1>
-							<p>This is a template that is great for small businesses. It doesn't have too much fancy flare to it, but it makes a great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>
+							<h2 className="text-center">Full Auto Detail</h2>
+							<hr/>
+							<p>
+								This is a business website designed with an auto detail company in mind and developed with a M.E.R.N. 
+								stack. Visitors can learn about the business, see what services they provide, find out there contact
+								information, see where the business is located with google maps, and leave a message if they have any questions. 
+								Visitors can also sign up to have the ability to schedule or cancel appointments, pay for services using PayPal,  
+								and leave a review of the services they recieved. I am working on adding a Admin side where the business
+								can manage appointments, manage reviews, manage customer information, and view messages left by visitors.
+
+								{/* The site consist of an home page where you can briefly tell visitors about you business.
+								An about page so you can go more in depth about the business, such as your history and experience;
+								visitors will also be able to read reviews left by your customers. A services page laying out what
+								you have to offer. A contact page where visitors can see wher your located on a google map, your 
+								contact information and they can also leave you a message if they have any questions. Visitors
+								can also sign up to have the ability schedule or cancel appointments, pay for services, and leave a review of the
+								services you provided. */}
+							</p>
 							<Link className="btn btn-primary btn-lg" to="/Signup"><FontAwesome.FaArrowCircleUp /> Sign Up</Link>
 						</Col>
 					</Row>
-					<Card className="text-white bg-secondary my-4 text-center">
-						<CardBody>
-							<p className="text-white m-0">This call to action card is a great place to showcase some important information or display a clever tagline!</p>
-						</CardBody>
-					</Card>
+					<br/>
 				</Container>
 		</div>
 	);

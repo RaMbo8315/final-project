@@ -50,11 +50,13 @@ export default class Client extends React.Component {
 			newAppt:{
 				name: "",
 				title: "",
+				price: "",
 				duration: "",
 				start: "",
 				end: "",
 				user: ""
 			},
+			beforeToday: false,
 			doubleMatched: false,
 			betweenMatched: false,
 			matched: false,
@@ -89,7 +91,7 @@ export default class Client extends React.Component {
 				appoint: result.data
 			})
 		});
-		axios.get("/api/findClient/" + this.props.auth.username).then((result)=>{
+		axios.get("/api/findUser/" + this.props.auth.username).then((result)=>{
 			console.log(result)
 			this.setState({
 				client:{
@@ -108,6 +110,17 @@ export default class Client extends React.Component {
 		this.setState({
 			startDate: moment(getDate).format()
 		})
+		if(moment(this.state.start).format() < moment().format()){
+			this.setState({
+				beforeToday: true,
+			})
+			console.log(this.state.beforeToday)
+		}else if(moment(this.state.start).format() > moment().format()){
+			this.setState({
+				beforeToday: false,
+			})
+			console.log(this.state.beforeToday)
+		}
 		this.getMatch(this.state.start);
 	}
 
@@ -152,7 +165,7 @@ export default class Client extends React.Component {
 		axios.get("api/matchedAppt/" + matchDate).then((result) => {
 			console.log(result.data[0])
 			if(typeof result.data[0] === "undefined"){
-				if(this.state.doubleMatched || this.state.betweenMatched === true){
+				if(this.state.doubleMatched === true|| this.state.betweenMatched === true){
 				this.setState({
 					matched: false,
 					popoverOpen: true
@@ -199,6 +212,7 @@ export default class Client extends React.Component {
 					newAppt:{
 						name: name,
 						title: title,
+						price: price,
 						duration: duration,
 						start: setDate,
 						end: endTime,
@@ -213,7 +227,7 @@ export default class Client extends React.Component {
 			axios.get("api/doubleAppt/" + this.state.newAppt.end).then((result) => {
 				console.log(result.data[0])
 				if(typeof result.data[0] === "undefined"){
-					if(this.state.matched || this.state.betweenMatched === true){
+					if(this.state.matched === true|| this.state.betweenMatched === true){
 						this.setState({
 							doubleMatched: false,
 							popoverOpen: true
@@ -242,7 +256,7 @@ export default class Client extends React.Component {
 					).then((result) => {
 					console.log(result.data[0])
 					if(typeof result.data[0] === "undefined"){
-						if(this.state.doubleMatched || this.state.matched === true){
+						if(this.state.doubleMatched === true|| this.state.matched === true){
 							this.setState({
 								betweenMatched: false,
 								popoverOpen: true
@@ -269,10 +283,11 @@ export default class Client extends React.Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		if(this.state.matched || this.state.doubleMatched || this.state.betweenMatched === true){
+		if(this.state.matched || this.state.doubleMatched || this.state.betweenMatched || this.state.beforeToday === true){
 			this.setState({
 				start: "",
 				startDate: "",
+				beforToday: false,
 				matched: false,
 				doubleMatched: false,
 				overMatched: false,
@@ -294,7 +309,7 @@ export default class Client extends React.Component {
 	render() {
 		const onSuccess = (payment) => {
 			// Congratulation, it came here means everything's fine!
-					console.log("The payment was succeeded!", payment);
+					console.log("The payment was successful!", payment);
 					// You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
 		}		
 		
@@ -386,14 +401,14 @@ export default class Client extends React.Component {
 													</Col>
 													<Col md="12">
 														<Label for="date">Date</Label>
-														<Input className="form-control" value = {this.state.start} id="Popover1" onChange = {this.handleChange} name="date" type="text" aria-describedby="nameHelp" placeholder="Choose a Day and Time from Calendar"/>
+														<Input className="form-control" value={this.state.start} id="Popover1" onChange={this.handleChange} name="date" type="text" aria-describedby="nameHelp" placeholder="Choose a Day and Time from Calendar"/>
 														<PopOver
 															popoverOpen={this.state.popoverOpen}
 														/>
 													</Col>
 												</Row>
 											</FormGroup>
-											<Input className="btn btn-primary btn-block" type = 'submit' onClick = {this.handleSubmit}/>								
+											<Input className="btn btn-primary btn-block" type='submit' onClick={this.handleSubmit}/>								
 										</Form>
 								</CardBody>
 							</Card>

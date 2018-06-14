@@ -2,19 +2,19 @@ module.exports = function (passport) {
 	const path = require("path");
 	const router = require('express').Router();
 	const apptControllers = require("../controllers/Appointment");
-	const testControllers = require("../controllers/Testimonial");
-	const clientControllers = require("../controllers/Client");
+	const reviewControllers = require("../controllers/Review");
+	const userControllers = require("../controllers/User");
 	const serviceControllers = require("../controllers/Service");
 	const messageControllers = require("../controllers/Message");
 
 
 	//add any API routes here
 		// need to set up ticket controller for create
-		router.get("/allAppt", apptControllers.AllAppointments);
+		router.get("/allAppt/", apptControllers.AllAppointments);
 
-		router.get("/api/findAppt:id", apptControllers.AppointmentsByClient);
+		router.get("/findAppt/:userId", apptControllers.AppointmentsByUser);
 
-		router.post("/createAppt", apptControllers.CreateAppointment);
+		router.post("/createAppt/", apptControllers.CreateAppointment);
 
 		router.get("/matchedAppt/:Appt", apptControllers.MatchedAppointment);
 
@@ -22,37 +22,37 @@ module.exports = function (passport) {
 
 		router.get("/betweenAppt/:Appt", apptControllers.BetweenAppointment);
 
-		router.post("/api/deleteAppt", apptControllers.DeleteAppointment);
+		router.post("/deleteAppt/", apptControllers.DeleteAppointment);
 		
-		router.post("/api/updateAppt", apptControllers.UpdateAppointment);
+		router.post("/updateAppt/", apptControllers.UpdateAppointment);
 		
-		router.get("/api/allTest", testControllers.AllTestimonial);
+		router.get("/allReviews/", reviewControllers.AllReviews);
 		
-		router.get("/api/findTest:id", testControllers.TestimonialById);
+		router.get("/findReview/:id", reviewControllers.ReviewById);
 		
-		router.post("/api/createTest", testControllers.CreateTestimonial);
+		router.post("/createReview/", reviewControllers.CreateReview);
 		
-		router.post("/api/deleteTest", testControllers.DeleteTestimonial);
+		router.post("/deleteReview/", reviewControllers.DeleteReview);
 		
-		router.post("/api/updateTest", testControllers.UpdateTestimonial);
+		router.post("/updateReview/", reviewControllers.UpdateReview);
 
-		router.get("/allClients", clientControllers.AllClients);
+		router.get("/allUsers/", userControllers.AllUsers);
 		
-		router.get("/findClient/:username", clientControllers.ClientById);
+		router.get("/findUser/:username", userControllers.UserByUsername);
 		
-		router.post("/createClient", clientControllers.CreateClient);
+		router.post("/createUser/", userControllers.CreateUser);
 		
-		router.post("/api/deleteClient", clientControllers.DeleteClient);
+		router.post("/deleteUser/", userControllers.DeleteUser);
 		
-		router.post("/updateClient", clientControllers.UpdateClient);
+		router.post("/updateUser/", userControllers.UpdateUser);
 
-		router.get("/allServices", serviceControllers.AllServices);
+		router.get("/allServices/", serviceControllers.AllServices);
 
 		router.get("/ServiceById/:id", serviceControllers.ServiceById);
 
-		router.get("/allMessage", messageControllers.AllMessages);
+		router.get("/allMessage/", messageControllers.AllMessages);
 
-		router.post("/createMessage", messageControllers.CreateMessage);
+		router.post("/createMessage/", messageControllers.CreateMessage);
 
 	return router;
 };

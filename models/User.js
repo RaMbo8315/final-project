@@ -11,7 +11,9 @@ const User = new Schema({
 	city: String,
 	state: String,
 	zip: String,
-});
+},{
+	timestamps: true
+  });
 //passport-local-mongoose creates a 'username' and some password fields for you
 //you can add some other fields here too if you like
 
